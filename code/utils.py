@@ -99,53 +99,45 @@ def load_dataset(dir_net, bin_num, logger, header = False):
     return A, G_lcc, NODE2ID, ID2NODE, node2bin
 
 
-# def load_dataset(dir_net, bin_num, logger):
-#     '''
-#
-#     change the remove 7316
-#     :param dir_net:
-#     :param bin_num:
-#     :param header:
-#     :return:
-#     '''
-#
-#     G = nx.read_adjlist(dir_net)
-#     G.remove_edges_from(nx.selfloop_edges(G))
-#
-#     logger.info('There are {} of nodes in the loaded PPI!'.format(len(list(G.nodes()))))
-#     net_node = list(max(nx.connected_components(G), key=len))
-#     net_node = sorted(net_node)
-#
-#     NODE2ID = dict()
-#     ID2NODE = dict()
-#     for idx in range(len(net_node)):
-#         ID2NODE[idx] = net_node[idx]
-#         NODE2ID[net_node[idx]] = idx
-#
-#     row_idx = []
-#     col_idx = []
-#     val_idx = []
-#     for e in G.edges:
-#         if e[0] in net_node and e[1] in net_node:
-#             row_idx.append(NODE2ID[e[0]])
-#             col_idx.append(NODE2ID[e[1]])
-#             val_idx.append(1.0)
-#             row_idx.append(NODE2ID[e[1]])
-#             col_idx.append(NODE2ID[e[0]])
-#             val_idx.append(1.0)
-#
-#     A = sp.csr_matrix((np.array(val_idx), (np.array(row_idx), np.array(col_idx))), shape=(len(net_node), len(net_node)))
-#     A = A.tolil()
-#     A.setdiag(0)
-#     A = A.tocsr()
-#
-#     G_lcc = nx.Graph()
-#     G_lcc.add_edges_from(list(zip(row_idx, col_idx)))
-#     node_degree = {n: G_lcc.degree[n] for n in G_lcc.nodes}
-#     sorted_node_degree = dict(sorted(node_degree.items(), key=lambda item: item[1]))
-#     node2bin = np.array_split(list(sorted_node_degree.keys()), bin_num)
-#
-#     return A, G_lcc, NODE2ID, ID2NODE, node2bin
+def load_dataset(dir_net, bin_num, logger):
+    '''
+    change the remove 7316
+    :param dir_net:
+    :param bin_num:
+    :param header:
+    :return:
+    '''
+    G = nx.read_adjlist(dir_net)
+    G.remove_edges_from(nx.selfloop_edges(G))
+    logger.info('There are {} of nodes in the loaded PPI!'.format(len(list(G.nodes()))))
+    net_node = list(max(nx.connected_components(G), key=len))
+    net_node = sorted(net_node)
+    NODE2ID = dict()
+    ID2NODE = dict()
+    for idx in range(len(net_node)):
+        ID2NODE[idx] = net_node[idx]
+        NODE2ID[net_node[idx]] = idx
+    row_idx = []
+    col_idx = []
+    val_idx = []
+    for e in G.edges:
+        if e[0] in net_node and e[1] in net_node:
+            row_idx.append(NODE2ID[e[0]])
+            col_idx.append(NODE2ID[e[1]])
+            val_idx.append(1.0)
+            row_idx.append(NODE2ID[e[1]])
+            col_idx.append(NODE2ID[e[0]])
+            val_idx.append(1.0)
+    A = sp.csr_matrix((np.array(val_idx), (np.array(row_idx), np.array(col_idx))), shape=(len(net_node), len(net_node)))
+    A = A.tolil()
+    A.setdiag(0)
+    A = A.tocsr()
+    G_lcc = nx.Graph()
+    G_lcc.add_edges_from(list(zip(row_idx, col_idx)))
+    node_degree = {n: G_lcc.degree[n] for n in G_lcc.nodes}
+    sorted_node_degree = dict(sorted(node_degree.items(), key=lambda item: item[1]))
+    node2bin = np.array_split(list(sorted_node_degree.keys()), bin_num)
+    return A, G_lcc, NODE2ID, ID2NODE, node2bin
 
 # def load_dataset(dir_net, bin_num, header = True):
 #
